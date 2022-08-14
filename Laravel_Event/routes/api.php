@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,14 @@ use App\Http\Controllers\ApiController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('login', [ApiController::class, 'authenticate']);
 
 Route::group(['middleware' => ['jwt.verify'], 'prefix' => 'v1'], function() {
-    Route::get('events', [ApiController::class, 'logout']);
-    Route::get('events/active-events', [ApiController::class, 'active_events']);
-    Route::get('events/{id}', [ApiController::class, 'Show']);
+    Route::get('logout', [ApiController::class, 'logout']);
+    Route::get('events', [EventController::class, 'getEvents']);
+    Route::get('events/active-events', [EventController::class, 'activeEvent']);
+    Route::get('events/{id}', [EventController::class, 'getEventById']);
+    Route::post('event/create', [EventController::class, 'createEvent']);
+    Route::put('event/edit/{id}',  [EventController::class, 'EditEventById']);
+    Route::delete('event/delete/{id}',  [EventController::class, 'deleteEventById']);
 });

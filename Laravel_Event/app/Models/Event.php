@@ -13,7 +13,7 @@ class Event extends Model
     use HasFactory, Uuids, SoftDeletes, Notifiable;
 
     protected $fillable = [
-        'name', 'slug'
+        'id','name', 'slug','start_date','end_date'
     ];
 
     /**
@@ -25,16 +25,6 @@ class Event extends Model
         'name' => ['required'],
         'start_date' => ['required'],
         'end_date' => ['required'],
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'id',
-        'uuid',
     ];
 
     /**
@@ -102,14 +92,4 @@ class Event extends Model
     {
         return ['created_at', 'updated_at', 'start_date', 'end_date'];
     }
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
 }
