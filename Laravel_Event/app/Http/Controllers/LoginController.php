@@ -11,7 +11,13 @@ use Illuminate\Support\Facades\Validator;
 class LoginController extends Controller
 {
     protected $redirectTo = '/';
+    protected $user;
  
+    public function __construct()
+    {
+        $this->user = JWTAuth::parseToken()->authenticate();
+    }
+
     public function login()
     {
         return view("login");

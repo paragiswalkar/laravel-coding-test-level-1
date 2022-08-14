@@ -36,7 +36,7 @@ class ApiController extends Controller
         }
  	
  		//Token created, return with success response and jwt token
-        return response()->json(["status"=>true,"redirect_location"=>url("events")]);
+        return response()->json(["status"=>true,"redirect_location"=>url("events"),"token"=>$token]);
     }
 
     public function logout(Request $request)

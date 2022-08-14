@@ -79,7 +79,14 @@
           $(e).find("[type='submit']").html("LOGIN");
           
           if (data.status) { // If success then redirect to login url
-            window.location = "http://127.0.0.1:8000/events";
+            if (data.token) {
+                sessionStorage.setItem("token", data.token);
+            }
+            $.ajax({
+                url: data.redirect_location,
+                headers: {"Authorization": "Bearer "+data.token}
+            });
+            window.location = data.redirect_location;
           }
         }).fail(function(response) {
             // handle error and show in html
