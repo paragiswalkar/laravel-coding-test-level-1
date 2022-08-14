@@ -22,31 +22,21 @@ class ApiController extends Controller
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json($validator->errors(),422);
         }
 
         //Request is validated
         //Crean token
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                	'success' => false,
-                	'message' => 'Login credentials are invalid.',
-                ], 400);
+                return response()->json([["Login credentials are invalid."]],400);
             }
         } catch (JWTException $e) {
-    	return $credentials;
-            return response()->json([
-                	'success' => false,
-                	'message' => 'Could not create token.',
-                ], 500);
+    	    return response()->json([["Could not create token."]],500);
         }
  	
  		//Token created, return with success response and jwt token
-        return response()->json([
-            'success' => true,
-            'token' => $token,
-        ]);
+        return response()->json(["status"=>true,"redirect_location"=>url("events")]);
     }
 
     public function logout(Request $request)
