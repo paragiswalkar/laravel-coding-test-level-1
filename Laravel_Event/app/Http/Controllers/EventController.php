@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use DataTables;
 
 class EventController extends Controller
 {
@@ -20,9 +21,21 @@ class EventController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function getEvents(Event $events)
+    public function getEvents(Event $events, Request $request)
     {
-        $data = $events->get()->toArray();
+        if ($request->ajax()) {
+            $data = $data = $events->get();
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+     
+                           $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
         return response()->json(['event' => $data]);
     }
 

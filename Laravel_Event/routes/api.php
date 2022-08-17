@@ -18,7 +18,7 @@ use App\Http\Controllers\EventController;
 Route::post('login', [ApiController::class, 'authenticate']);
 
 Route::group(['middleware' => ['jwt.verify'], 'prefix' => 'v1'], function() {
-    Route::get('logout', [ApiController::class, 'logout']);
+    //Route::get('signout', [ApiController::class, 'signout']);
     Route::get('events', [EventController::class, 'getEvents']);
     Route::get('events/active-events', [EventController::class, 'activeEvent']);
     Route::get('events/{id}', [EventController::class, 'getEventById']);

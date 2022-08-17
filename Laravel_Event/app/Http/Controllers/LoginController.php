@@ -2,29 +2,91 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Validator;
+use Session;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Models\User;
 
 class LoginController extends Controller
 {
-    protected $redirectTo = '/';
-    protected $user;
- 
+    use AuthenticatesUsers;
+
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/admin/dashboard';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
-        $this->user = JWTAuth::parseToken()->authenticate();
+        $this->middleware('guest', ['except' => 'logout']);
+    }
+    
+    public function getLogin()
+    {
+        return view('login');
     }
 
-    public function login()
+    /**
+     * Show the application loginprocess.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function postLogin(Request $request)
     {
-        return view("login");
+        $credentials = $request->only('username', 'password');
+        
+        $this->validate($request, [
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+
+        try {
+            
+            if (auth()->guard('web')->attempt(['username' => $request->input('username'), 'password' => $request->input('password')]))
+            {
+                $user = auth()->guard('web')->user();
+                $token = JWTAuth::attempt($credentials);
+
+                \Session::put('token',$token);
+                return redirect()->route('dashboard')->header('Authorization','Bearer'.$token);
+                
+            } else {
+                return back()->with('error','your username and password are wrong.');
+            }
+        } catch (Expetion $e) {
+            print_r($e);
+        }
+
     }
 
-    public function events()
+    /**
+     * Destroy an authenticated session.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Request $request)
     {
-        return view("dashboard");
+        dd($request);exit;
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

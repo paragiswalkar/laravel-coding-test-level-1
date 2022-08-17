@@ -9,11 +9,14 @@
         "doctrine/dbal": "^3.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "infyomlabs/laravel-ui-adminlte": "^3.2",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "laravel/ui": "^3.4",
         "tymon/jwt-auth": "^1.0",
-        "webpatser/laravel-uuid": "^4.0"
+        "webpatser/laravel-uuid": "^4.0",
+        "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

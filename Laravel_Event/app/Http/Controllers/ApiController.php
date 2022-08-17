@@ -39,7 +39,7 @@ class ApiController extends Controller
         return response()->json(["status"=>true,"redirect_location"=>url("events"),"token"=>$token]);
     }
 
-    public function logout(Request $request)
+    public function signout(Request $request)
     {
         //valid credential
         $validator = Validator::make($request->only('token'), [
