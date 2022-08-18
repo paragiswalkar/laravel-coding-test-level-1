@@ -29,4 +29,10 @@ class AdminController extends Controller
         
         return view('home',['token' => $token]);
     }
+
+    public function storeEvent(Request $request) {
+        $token = \Session::get('token');
+
+        return view('create',['token' => $token]);
+    }
 }

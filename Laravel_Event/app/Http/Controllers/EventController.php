@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use DataTables;
+use DB;
 
 class EventController extends Controller
 {
@@ -24,12 +25,14 @@ class EventController extends Controller
     public function getEvents(Event $events, Request $request)
     {
         if ($request->ajax()) {
-            $data = $data = $events->get();
+            DB::statement(DB::raw('set @rownum=0'));
+            $data = $data = $events->get(['events.*', 
+            DB::raw('@rownum  := @rownum  + 1 AS rownum')]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
      
-                           $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+                           $btn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
     
                             return $btn;
                     })

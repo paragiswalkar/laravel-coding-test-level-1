@@ -28,7 +28,8 @@ Route::post('signout',[LoginController::class, 'destroy'])->name('signout');
 
 Route::group(['middleware' => 'auth','prefix' => 'admin'], function () {
 	// Admin Dashboard
-	Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');	
+	Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
+	Route::get('create-event', [AdminController::class, 'storeEvent'])->name('create-event');		
 });
 
 Auth::routes();
