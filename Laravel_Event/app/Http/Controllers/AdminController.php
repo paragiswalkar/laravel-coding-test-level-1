@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Session;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
+use App\Models\Event;
 
 class AdminController extends Controller
 {
@@ -30,9 +36,16 @@ class AdminController extends Controller
         return view('home',['token' => $token]);
     }
 
-    public function storeEvent(Request $request) {
+    public function eventForm() {
         $token = \Session::get('token');
-
         return view('create',['token' => $token]);
+    }
+
+    public function eventEditForm($id) {
+        $token = \Session::get('token');
+        $events = new Event;
+        $data = $events->find($id);
+        
+        return view('edit',['token' => $token,'event'=>$data]);
     }
 }

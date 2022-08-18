@@ -26,13 +26,13 @@ class EventController extends Controller
     {
         if ($request->ajax()) {
             DB::statement(DB::raw('set @rownum=0'));
-            $data = $data = $events->get(['events.*', 
+            $data = $data = $events->latest('updated_at')->first()->get(['events.*', 
             DB::raw('@rownum  := @rownum  + 1 AS rownum')]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
      
-                           $btn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
+                           $btn = '<a href="/admin/edit-event/'.$row->id.'" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="btn-delete btn btn-danger btn-sm" onclick="deleteFunction('."'".$row->id."'".');"><i class="fa fa-trash"></i></a>';
     
                             return $btn;
                     })
@@ -50,17 +50,19 @@ class EventController extends Controller
     }
 
     public function createEvent(Request $request) {
+        $credentials = $request->only('name', 'slug', 'start_date', 'end_date');
         $input = $request->all();
         
         $validator = Validator::make($input, [
             'name' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required'
+            'slug' => 'required',
+            'start_date'=> 'required',
+            'end_date'=>'required'
         ]);
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json(['error' => $validator->messages()], 422);
         }
 
         try {
@@ -69,11 +71,9 @@ class EventController extends Controller
             $event = Event::create([
                 'id' => $uuid,
                 'name' => $request->get('name'),
-                'slug' => $request->get('name'),
-                'start_date' => $request->get('start_date') ? Carbon::createFromFormat('d-m-Y',
-                $request->get('start_date')) : null,
-                'end_date' => $request->get('end_date') ? Carbon::createFromFormat('d-m-Y',
-                $request->get('end_date')) : null
+                'slug' => $request->get('slug'),
+                'start_date' => $request->get('start_date') ? $request->get('start_date') : null,
+                'end_date' => $request->get('end_date') ? $request->get('end_date') : null
             ]);
         } catch (\Exception $e) {
             return $e;
@@ -107,13 +107,11 @@ class EventController extends Controller
 
         try {
 
-            $event = Event::find($id);   
+            $event = Event::find($id);
             $event->name = $input['name'];
-            $event->slug = $input['name'];
-            $event->start_date = $input['start_date'] ? Carbon::createFromFormat('d-m-Y',
-            $input['start_date']) : null;
-            $event->end_date = $input['end_date'] ? Carbon::createFromFormat('d-m-Y',
-            $input['end_date']) : null;
+            $event->slug = $input['slug'];
+            $event->start_date = $input['start_date'] ? $input['start_date'] : null;
+            $event->end_date = $input['end_date'] ? $input['end_date'] : null;
 
             $event->save();
 

@@ -5,7 +5,7 @@
     <div class="container-fluid" aria-label="breadcrumbs">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h2>Add New Event</h2>
+                <h2>Edit Event</h2>
             </div>
             <div class="col-sm-6">
                 @if($currentUser = auth()->user())@include('layouts.breadcrumbs')@endif
@@ -14,21 +14,20 @@
     </div>
 </section>
 <div class="offset-md-3 col-md-6">
-    <form id="create_event">
+    <form id="edit_event">
         @csrf
-    
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Name:</strong>
-                    <input type="text" name="name" class="form-control" placeholder="Name" value="{{ old('name') }}">
+                    <input type="text" name="name" class="form-control" placeholder="Event Name" value="{{ $event->name }}">
                     <span class="text-danger" id="nameError"></span>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Slug:</strong>
-                    <input class="form-control"  name="slug" placeholder="Slug" value="{{ old('slug') }}">
+                    <input class="form-control"  name="slug" placeholder="Slug" value="{{ $event->slug }}">
                     <span class="text-danger" id="slugError"></span>
                 </div>
             </div>
@@ -36,10 +35,10 @@
                 <div class="form-group">
                     <strong>Start At:</strong>
                     <div class="input-group date" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" id="startAt" name="start_at" data-target="#startAt" value="{{ old('start_at') }}">
+                        <input type="text" class="form-control datetimepicker-input" id="startAt" name="start_at" data-target="#startAt" value="{{ date('Y/m/d H:i', strtotime($event->start_date)) }}">
                         <div class="input-group-append" data-target="#startAt" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            <input type="hidden" id="start_date" name="start_date" value="">
+                            <input type="hidden" id="start_date" name="start_date" value="{{ date('Y/m/d H:i', strtotime($event->start_date)) }}">
                         </div>
                     </div>
                     <span class="text-danger" id="startError"></span>
@@ -49,17 +48,24 @@
                 <div class="form-group">
                     <strong>End At:</strong>
                     <div class="input-group date" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" id="endAt" name="end_at" data-target="#endAt" value="{{ old('end_at') }}">
+                        <input type="text" class="form-control datetimepicker-input" id="endAt" name="end_at" data-target="#endAt" value="{{ date('Y/m/d H:i', strtotime($event->end_date)) }}">
                         <div class="input-group-append" data-target="#endAT" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            <input type="hidden" id="end_date" name="end_date" value="">
+                            <input type="hidden" id="end_date" name="end_date" value="{{ date('Y/m/d H:i', strtotime($event->end_date)) }}">
                         </div>
                     </div>
                     <span class="text-danger" id="endError"></span>
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 pull-left">
-                <button type="submit" class="btn-submit btn btn-primary">Submit</button>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button type="submit" class="btn-submit btn btn-primary">Submit</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="{{route('dashboard')}}" class="btn btn-danger float-sm-right">Cancel</a>
+                    </div>
+                </div>                
             </div>
         </div>
     
@@ -95,11 +101,11 @@ $(document).ready(function () {
         var end_date = $("input[name=end_date]").val();
    
         $.ajax({
-           type:'POST',
-           url:"/api/v1/event/create",
+           type:'PUT',
+           url:"/api/v1/event/edit/{{$event->id}}",
            data:{name:name, slug:slug, start_date:start_date,end_date:end_date},
            success:function(response){
-            console.log(response);
+            
             if(response) {
                 if(response.success) {
                     window.location.href = '/admin/dashboard';
@@ -118,5 +124,5 @@ $(document).ready(function () {
   
     });
 });
-</script>  
+</script>
 @endsection

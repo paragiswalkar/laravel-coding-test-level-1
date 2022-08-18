@@ -3,15 +3,19 @@
 <link href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="//cdn.datatables.net/1.12.1/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <div class="container-fluid">
-        <h1 class="text-black-50">You are logged in!</h1>
+        <div class="content-header">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-black-50">You are logged in!</h1>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{{ route('create-event') }}" class="btn btn-primary btn-sm float-sm-right">Add New Event</a>
+                </div>
+            </div>
+        </div>
+        
         <div class="col-md-12">
-            <div class="col-md-12">
-            <div class="pull-right">
-                <a href="{{ route('create-event') }}" class="btn btn-primary btn-sm">Add New Event</a>
-            </div>
-            </div>
-            <div class="col-md-12">
-                <table id="example" class="table table-bordered table-hover dataTable dtr-inline" style="width:100%">
+            <table id="example" class="table table-bordered table-hover dataTable dtr-inline" style="width:100%">
                     <thead>
                         <tr>
                             <th>Sr No</th>
@@ -20,8 +24,7 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                </table>
-            </div>
+            </table>
         </div>
     </div>
 <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
@@ -45,5 +48,29 @@ $(document).ready(function () {
         ]
     });
 });
+function deleteFunction(id) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Authorization': 'Bearer '+ '{{$token}}'
+            }
+        });
+
+        $.ajax({
+           type:'DELETE',
+           url:"/api/v1/event/delete/"+id,
+           success:function(response){
+            if(response) {
+                if(response.success) {
+                    window.location.href = '/admin/dashboard';
+                }
+            }
+           },
+           error: function(error) {
+                const obj = JSON.parse(error.responseText);
+                console.log(obj);
+           }
+        });
+    }
 </script>    
 @endsection
