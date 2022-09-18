@@ -11,6 +11,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Models\Event;
+use App\Models\Services;
+use App\Models\Locations;
+use App\Models\Documents;
 
 class AdminController extends Controller
 {
@@ -47,5 +50,28 @@ class AdminController extends Controller
         $data = $events->find($id);
         
         return view('edit',['token' => $token,'event'=>$data]);
+    }
+
+    public function getServices() {
+        //\DB::connection()->enableQueryLog();
+        $getServices = Services::get()->toArray();
+        $results = array();
+        //dd($getServices);
+        //$queries = \DB::getQueryLog();
+        foreach($getServices as $i=>$service) {
+                $locations = Locations::with(['documents' => function ($query) use($service) {
+                    $query->whereIn('services_id',[$service['id']]);
+                }])->get()->toArray();
+                $results[$i] = $service;
+                foreach($locations as $j=>$location) {
+                    if(!Empty($location['documents'])) {
+                        $results[$i]['locations'][] = $location;
+                    }
+                }
+                
+        }
+        //$queries = \DB::getQueryLog();
+        //dd($results); 
+        return $results;
     }
 }

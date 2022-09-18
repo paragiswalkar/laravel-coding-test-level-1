@@ -30,7 +30,8 @@ Route::group(['middleware' => 'auth','prefix' => 'admin'], function () {
 	// Admin Dashboard
 	Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
 	Route::get('create-event', [AdminController::class, 'eventForm'])->name('create-event');
-	Route::get('edit-event/{id}', [AdminController::class, 'eventEditForm'])->name('edit-event');		
+	Route::get('edit-event/{id}', [AdminController::class, 'eventEditForm'])->name('edit-event');
+	Route::get('services', [AdminController::class, 'getServices'])->name('services');		
 });
 
 Auth::routes();

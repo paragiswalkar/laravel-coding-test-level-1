@@ -63,7 +63,7 @@ class EventController extends Controller
         //Send failed response if request is not valid
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 422);
-        }
+        }        
 
         try {
             $uuid = Str::uuid()->toString();
@@ -112,6 +112,20 @@ class EventController extends Controller
             $event->slug = $input['slug'];
             $event->start_date = $input['start_date'] ? $input['start_date'] : null;
             $event->end_date = $input['end_date'] ? $input['end_date'] : null;
+
+            if($event->start_date == $input('start_date')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Start Date is Same',
+                    'data' => $event
+                ]);
+            } elseif($event->end_date == $input('end_date')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'End Date is Same',
+                    'data' => $event
+                ]);
+            }
 
             $event->save();
 

@@ -15,5 +15,25 @@ class DatabaseSeeder extends Seeder
     {
         //\App\Models\Event::factory(5)->create();
         //\App\Models\User::factory(1)->create();
+
+        // $this->call([
+        //     ServicesSeeder::class,
+        // ]);
+
+        // $this->call([
+        //     LocationsSeeder::class,
+        // ]);
+
+        // $this->call([
+        //     DocumentsSeeder::class,
+        // ]);
+
+        // $this->call([
+        //     ServiceLocationsSeeder::class,
+        // ]);
+
+        // $this->call([
+        //     ServiceLocationDocumentsSeeder::class,
+        // ]);
     }
 }
